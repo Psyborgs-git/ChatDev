@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # =========== Copyright 2023 @ CAMEL-AI.org. All Rights Reserved. ===========
+import time
 import os
 import re
 import zipfile
@@ -24,8 +25,6 @@ from camel.messages import OpenAIMessage
 from camel.typing import ModelType, TaskType
 
 F = TypeVar('F', bound=Callable[..., Any])
-
-import time
 
 
 def count_tokens_openai_chat_models(
@@ -84,6 +83,7 @@ def num_tokens_from_messages(
 
     if model in {
         ModelType.GPT_3_5_TURBO, ModelType.GPT_4, ModelType.GPT_4_32k,
+        ModelType.GPT_4_PRV,
         ModelType.STUB
     }:
         return count_tokens_openai_chat_models(messages, encoding)
@@ -115,6 +115,8 @@ def get_model_token_limit(model: ModelType) -> int:
         return 32768
     elif model == ModelType.STUB:
         return 4096
+    elif model == ModelType.GPT_4_PRV:
+        return 128000
     else:
         raise ValueError("Unknown model type")
 

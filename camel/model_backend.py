@@ -47,9 +47,10 @@ class OpenAIModel(ModelBackend):
         super().__init__()
         self.model_type = model_type
         self.model_config_dict = model_config_dict
-        
+
     def run(self, *args, **kwargs) -> Dict[str, Any]:
-        string = "\n".join([message["content"] for message in kwargs["messages"]])
+        string = "\n".join([message["content"]
+                           for message in kwargs["messages"]])
         encoding = tiktoken.encoding_for_model(self.model_type.value)
         num_prompt_tokens = len(encoding.encode(string))
         gap_between_send_receive = 15 * len(kwargs["messages"])
@@ -69,14 +70,16 @@ class OpenAIModel(ModelBackend):
         self.model_config_dict['max_tokens'] = num_max_completion_tokens
 
         try:
-            response = openai.ChatCompletion.create(*args, **kwargs, model=self.model_type.value, **self.model_config_dict)
+            response = openai.ChatCompletion.create(
+                *args, **kwargs, model=self.model_type.value, **self.model_config_dict)
         except AttributeError:
-            response = openai.chat.completions.create(*args, **kwargs, model=self.model_type.value, **self.model_config_dict)
+            response = openai.chat.completions.create(
+                *args, **kwargs, model=self.model_type.value, **self.model_config_dict)
 
         cost = prompt_cost(
-                self.model_type.value, 
-                num_prompt_tokens=response["usage"]["prompt_tokens"], 
-                num_completion_tokens=response["usage"]["completion_tokens"]
+            self.model_type.value,
+            num_prompt_tokens=response["usage"]["prompt_tokens"],
+            num_completion_tokens=response["usage"]["completion_tokens"]
         )
 
         log_and_print_online(
@@ -120,6 +123,7 @@ class ModelFactory:
 
         if model_type in {
             ModelType.GPT_3_5_TURBO, ModelType.GPT_4, ModelType.GPT_4_32k,
+            ModelType.GPT_4_PRV,
             None
         }:
             model_class = OpenAIModel

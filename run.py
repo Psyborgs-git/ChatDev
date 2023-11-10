@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # =========== Copyright 2023 @ CAMEL-AI.org. All Rights Reserved. ===========
+from chatdev.chat_chain import ChatChain
 import argparse
 import logging
 import os
@@ -20,8 +21,6 @@ from camel.typing import ModelType
 
 root = os.path.dirname(__file__)
 sys.path.append(root)
-
-from chatdev.chat_chain import ChatChain
 
 
 def get_config(company):
@@ -78,7 +77,10 @@ args = parser.parse_args()
 #          Init ChatChain
 # ----------------------------------------
 config_path, config_phase_path, config_role_path = get_config(args.config)
-args2type = {'GPT_3_5_TURBO': ModelType.GPT_3_5_TURBO, 'GPT_4': ModelType.GPT_4, 'GPT_4_32K': ModelType.GPT_4_32k}
+args2type = {'GPT_3_5_TURBO': ModelType.GPT_3_5_TURBO,
+             'GPT_4': ModelType.GPT_4, 'GPT_4_32K': ModelType.GPT_4_32k,
+             "GPT_4_PRV": ModelType.GPT_4_PRV
+             }
 chat_chain = ChatChain(config_path=config_path,
                        config_phase_path=config_phase_path,
                        config_role_path=config_role_path,
